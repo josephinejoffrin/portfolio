@@ -7,17 +7,11 @@ async function renderPDF() {
       "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.mjs"
     );
 
-    const response = await fetch(pdfUrl);
-    if (!response.ok) {
-      throw new Error("PDF introuvable : " + response.status);
-    }
+    // Indique à PDF.js où trouver son worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.mjs";
 
-    const data = new Uint8Array(await response.arrayBuffer());
-
-    const pdf = await pdfjsLib.getDocument({
-      data: data,
-      disableWorker: true
-    }).promise;
+    const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
 
     viewer.innerHTML = "";
 
@@ -34,10 +28,8 @@ async function renderPDF() {
       const context = canvas.getContext("2d");
 
       const baseViewport = page.getViewport({ scale: 1 });
-
       const availableWidth = viewer.clientWidth - 20;
       const scale = availableWidth / baseViewport.width;
-
       const viewport = page.getViewport({ scale });
 
       const pixelRatio = window.devicePixelRatio || 1;
@@ -57,7 +49,6 @@ async function renderPDF() {
 
   } catch (error) {
     console.error("Erreur PDF.js :", error);
-
     viewer.innerHTML =
       "<p class='pdf-error'>Impossible de charger le portfolio.</p>";
   }
