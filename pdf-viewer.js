@@ -1,14 +1,25 @@
-import * as pdfjsLib from "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.mjs";
-
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.mjs";
-
 const viewer = document.getElementById("pdf-viewer");
 const pdfUrl = viewer.dataset.pdf;
 
 async function renderPDF() {
   try {
-    const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+    const pdfjsLib = await import(
+      "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.mjs"
+    );
+
+    const response = await fetch(pdfUrl);
+    if (!response.ok) {
+      throw new Error("PDF introuvable : " + response.status);
+    }
+
+    const data = new Uint8Array(await response.arrayBuffer());
+
+    const pdf = await pdfjsLib.getDocument({
+      data: data,
+      disableWorker: true
+    }).promise;
+
+    viewer.innerHTML = "";
 
     for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
       const page = await pdf.getPage(pageNumber);
@@ -22,32 +33,31 @@ async function renderPDF() {
 
       const context = canvas.getContext("2d");
 
-      const initialViewport = page.getViewport({ scale: 1 });
+      const baseViewport = page.getViewport({ scale: 1 });
 
       const availableWidth = viewer.clientWidth - 20;
-      const scale = availableWidth / initialViewport.width;
+      const scale = availableWidth / baseViewport.width;
 
       const viewport = page.getViewport({ scale });
 
-      const outputScale = window.devicePixelRatio || 1;
+      const pixelRatio = window.devicePixelRatio || 1;
 
-      canvas.width = Math.floor(viewport.width * outputScale);
-      canvas.height = Math.floor(viewport.height * outputScale);
+      canvas.width = Math.floor(viewport.width * pixelRatio);
+      canvas.height = Math.floor(viewport.height * pixelRatio);
 
-      canvas.style.width = `${Math.floor(viewport.width)}px`;
-      canvas.style.height = `${Math.floor(viewport.height)}px`;
+      canvas.style.width = `${viewport.width}px`;
+      canvas.style.height = `${viewport.height}px`;
 
       await page.render({
         canvasContext: context,
         viewport: viewport,
-        transform:
-          outputScale !== 1
-            ? [outputScale, 0, 0, outputScale, 0, 0]
-            : null
+        transform: [pixelRatio, 0, 0, pixelRatio, 0, 0]
       }).promise;
     }
+
   } catch (error) {
-    console.error("PDF.js :", error);
+    console.error("Erreur PDF.js :", error);
+
     viewer.innerHTML =
       "<p class='pdf-error'>Impossible de charger le portfolio.</p>";
   }
