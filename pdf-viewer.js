@@ -15,9 +15,12 @@ async function renderPDF() {
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.mjs";
 
-    console.log("PDF chargé :", pdfUrl);
-
-    const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+    const pdf = await pdfjsLib.getDocument({
+      url: pdfUrl,
+      useSystemFonts: true,
+      isEvalSupported: true,
+      disableFontFace: false
+    }).promise;
 
     viewer.innerHTML = "";
 
@@ -31,14 +34,18 @@ async function renderPDF() {
       container.appendChild(canvas);
       viewer.appendChild(container);
 
-      const context = canvas.getContext("2d");
+      const context = canvas.getContext("2d", {
+        alpha: false
+      });
 
       const baseViewport = page.getViewport({ scale: 1 });
+
       const availableWidth = viewer.clientWidth - 20;
       const scale = availableWidth / baseViewport.width;
+
       const viewport = page.getViewport({ scale });
 
-      const pixelRatio = window.devicePixelRatio || 1;
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
 
       canvas.width = Math.floor(viewport.width * pixelRatio);
       canvas.height = Math.floor(viewport.height * pixelRatio);
@@ -49,7 +56,8 @@ async function renderPDF() {
       await page.render({
         canvasContext: context,
         viewport: viewport,
-        transform: [pixelRatio, 0, 0, pixelRatio, 0, 0]
+        transform: [pixelRatio, 0, 0, pixelRatio, 0, 0],
+        intent: "display"
       }).promise;
     }
 
