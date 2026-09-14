@@ -1,5 +1,5 @@
 const viewer = document.getElementById("pdf-viewer");
-const pdfUrl = viewer.dataset.pdf;
+const pdfUrl = viewer.getAttribute("data-pdf");
 
 async function renderPDF() {
   try {
@@ -7,11 +7,14 @@ async function renderPDF() {
       "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.mjs"
     );
 
-    // Indique à PDF.js où trouver son worker
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.mjs";
 
-    const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+    console.log("PDF à charger :", pdfUrl);
+
+    const pdf = await pdfjsLib.getDocument({
+      url: pdfUrl
+    }).promise;
 
     viewer.innerHTML = "";
 
