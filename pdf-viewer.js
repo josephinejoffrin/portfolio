@@ -1,5 +1,10 @@
 const viewer = document.getElementById("pdf-viewer");
-const pdfUrl = viewer.getAttribute("data-pdf");
+
+const pdfFile = window.location.pathname.includes("designgraphique")
+  ? "portfolio_josephine_joffrin_2026_design_graphique.pdf"
+  : "portfolio_josephine_joffrin_2026_illustration.pdf";
+
+const pdfUrl = new URL(pdfFile, window.location.href).href;
 
 async function renderPDF() {
   try {
@@ -10,11 +15,9 @@ async function renderPDF() {
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.mjs";
 
-    console.log("PDF à charger :", pdfUrl);
+    console.log("PDF chargé :", pdfUrl);
 
-    const pdf = await pdfjsLib.getDocument({
-      url: pdfUrl
-    }).promise;
+    const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
 
     viewer.innerHTML = "";
 
