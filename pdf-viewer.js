@@ -15,8 +15,16 @@ async function renderPDF() {
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.mjs";
 
+    const response = await fetch(pdfUrl);
+
+    if (!response.ok) {
+      throw new Error("PDF introuvable : " + response.status);
+    }
+
+    const data = new Uint8Array(await response.arrayBuffer());
+
     const pdf = await pdfjsLib.getDocument({
-      url: pdfUrl,
+      data: data,
       useSystemFonts: true,
       isEvalSupported: true,
       disableFontFace: false
@@ -39,10 +47,8 @@ async function renderPDF() {
       });
 
       const baseViewport = page.getViewport({ scale: 1 });
-
       const availableWidth = viewer.clientWidth - 20;
       const scale = availableWidth / baseViewport.width;
-
       const viewport = page.getViewport({ scale });
 
       const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
