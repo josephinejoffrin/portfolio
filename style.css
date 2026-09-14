@@ -59,7 +59,7 @@ body {
 .viewer iframe{display:block;width:100%;height:100%;border:0}
 @media(max-width:600px) {
   .topbar {
-    height: 125px;
+    flex: 0 0 125px;
     padding: 15px 8px 15px;
   }
 
@@ -80,11 +80,6 @@ body {
   }
 
   .viewer {
-    height: calc(100vh - 125px);
-  }
-
-  .viewer iframe {
-    height: calc(100% - 15px);
-    margin-top: 15px;
+    padding-top: 15px;
   }
 }
