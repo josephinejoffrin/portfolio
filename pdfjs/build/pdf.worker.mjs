@@ -1,3 +1,12 @@
+if (typeof Math.sumPrecise !== 'function') {
+  Math.sumPrecise = function (iterable) {
+    let sum = 0;
+    for (const n of iterable) {
+      sum += n;
+    }
+    return sum;
+  };
+}
 /**
  * @licstart The following is the entire license notice for the
  * JavaScript code in this page
