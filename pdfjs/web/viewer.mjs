@@ -5523,9 +5523,7 @@ var es_iterator_for_each = __webpack_require__(7588);
   } = navigator;
   const isAndroid = /Android/.test(userAgent);
   const isIOS = /\b(?:iPad|iPhone|iPod)(?=;)/.test(userAgent) || platform === "MacIntel" && maxTouchPoints > 1;
-  if (isIOS || isAndroid) {
-    compatParams.set("maxCanvasPixels", 5242880);
-  }
+  compatParams.set("maxCanvasPixels", 5242880);
   if (isAndroid) {
     compatParams.set("useSystemFonts", false);
   }
@@ -7331,7 +7329,7 @@ class FluentResource {
       if (test(RE_UNICODE_ESCAPE)) {
         let [, codepoint4, codepoint6] = match(RE_UNICODE_ESCAPE);
         let codepoint = parseInt(codepoint4 || codepoint6, 16);
-        return codepoint <= 0xd7ff || 0xe000 <= codepoint ? String.fromCodePoint(codepoint) : "�";
+        return codepoint <= 0xd7ff || 0xe000 <= codepoint ? String.fromCodePoint(codepoint) : " ";
       }
       throw new SyntaxError("Unknown escape sequence");
     }
