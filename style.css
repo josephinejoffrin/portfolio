@@ -72,11 +72,11 @@ body {
   text-align: center;
   background: #fff;
   font: 400 14px/1.4 'Figtree', sans-serif;
-  color: #2A60BC;
+  color: rgba(42, 96, 188, 0.6);
 }
 
 .pdf-fallback a {
-  color: #2A60BC;
+  color: rgba(42, 96, 188, 0.6);
   text-decoration: underline;
 }
 
