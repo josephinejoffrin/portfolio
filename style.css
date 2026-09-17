@@ -71,13 +71,19 @@ body {
   padding: 7px 12px 9px;
   text-align: center;
   background: #fff;
-  font: 400 12px/1.4 'Figtree', sans-serif;
+  font: 400 14px/1.4 'Figtree', sans-serif;
   color: #2A60BC;
 }
 
 .pdf-fallback a {
   color: #2A60BC;
   text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .pdf-fallback {
+    font-size: 12px;
+  }
 }
 
 /* Lecteur PDF */
